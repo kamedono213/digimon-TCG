@@ -594,6 +594,12 @@
      max-width:720pxで画面中央に細長く収めていたため、PC・ワイド画面で左右に
      大きな空白ができていた。参考画像(battle.webp)は画面幅いっぱいに要素を
      広げて配置しているため、それに合わせて大幅に拡張する */
+  /* 2026-09-06追加(UI改修Phase3):対局中はロゴ的なタイトル/サブタイトルは不要な装飾
+     (メインメニュー等、他画面には表示したままにする)。常時隠すことで対戦盤面が
+     使える縦方向スペースを底上げし、「専用ゲーム画面」としての密度を上げる。
+     以前はmax-height:520px時のみ隠していたが、高さに余裕がある画面でも
+     対局中は不要なため常時適用に変更 */
+  #battleScreen > h1.title, #battleScreen > .subtitle{ display:none; }
   .arena{ position:relative; align-self:stretch; max-width:1320px; min-width:0; margin:0 auto; padding:0 10px 10px; display:flex; flex-direction:column; gap:6px; flex:1; width:100%; }
   /* UI仕様書(2026-07-26再々修正):プレイマットは自分のターン中はフィールド全体に自分の
      プレイマットを表示、相手のターンに切り替わる瞬間(ENEMY TURN表示と同じタイミング)に
@@ -630,11 +636,18 @@
     border-color:rgba(190,110,255,.45);
     box-shadow:0 0 10px rgba(190,110,255,.15) inset;
   }
+  /* 2026-09-06追加(UI改修Phase3):各ゾーンをただの枠ではなく「ゲーム内のパネル」に
+     見せるための小さなラベルタブ(ゾーン名は変更しない、見た目だけ)。dark-exile-block
+     等の極小ゾーンでは場所を取りすぎないよう、既存の上書きルール(下方)で
+     さらに小さくする */
   .zone-label{
-    position:absolute; top:3px; left:6px;
-    font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px;
-    color:#fff; text-shadow:var(--txt-outline); text-transform:uppercase; z-index:1;
+    position:absolute; top:3px; left:5px;
+    font-family:'Space Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.5px;
+    color:var(--ink-dim); background:rgba(23,21,18,.7); border:1px solid rgba(90,210,255,.3);
+    border-radius:4px; padding:1px 5px;
+    text-shadow:none; z-index:1; white-space:nowrap; pointer-events:none;
   }
+  .dark-area .zone-label, .exile-area .zone-label{ border-color:rgba(190,110,255,.35); }
   /* デッキ下の封印バッジ:自分の場のデジモンが【封印】している総枚数(0枚なら非表示) */
   .deck-seal-badge{
     position:absolute; bottom:3px; right:5px; z-index:2;
@@ -830,7 +843,11 @@
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-family:'Space Mono'; font-weight:700; font-size:22px; color:#fff; text-shadow:var(--txt-outline);
   }
-  .zone.attack-target{ box-shadow:0 0 0 3px var(--red-bright) inset, 0 0 14px var(--red-bright); cursor:crosshair; }
+  @keyframes selectable-pulse-red-inset{
+    0%,100%{ box-shadow:0 0 0 3px var(--red-bright) inset, 0 0 12px var(--red-bright); }
+    50%{ box-shadow:0 0 0 4px var(--red-bright) inset, 0 0 20px var(--red-bright); }
+  }
+  .zone.attack-target{ cursor:crosshair; animation:selectable-pulse-red-inset 1.1s ease-in-out infinite; }
   .zone.attack-target .deck-stack{ box-shadow:0 0 10px var(--red-bright); }
   /* デッキ0枚:カード裏面を消し、枠だけ薄く残してフィールドの地が透けて見えるようにする */
   .deck-stack.deck-stack-empty{
@@ -1065,17 +1082,36 @@
     transition:opacity .25s ease;
   }
   .rainbow-card.holo-active::after{ opacity:.9; }
+  .card-digimon{ transition:transform .15s ease, box-shadow .15s ease, filter .15s ease; }
   .card-digimon:hover{ transform:translateY(-3px); }
+  .card-digimon:active{ transform:translateY(-1px) scale(.97); }
   .card-digimon.tapped{ opacity:.5; filter:grayscale(.35); }
   /* ハッキング(ヌメモン等):相手の場にいるが所有権は自分のカードを上下反転表示し、
      ひと目で「ハッキングされている」と分かるようにする(2026-07-25) */
   .card-digimon.hacked-flip{ transform:rotate(180deg); }
+  /* 2026-09-06追加(UI改修Phase3):「今操作できる/対象にできる」ことを一目で伝えるための
+     共通パルスアニメーション(蟲神器の「選択可能=琥珀色パルス」という設計思想を、
+     このゲームの既存配色(進化可能=金/攻撃対象=赤/手札連携対象=緑)に適用しただけで、
+     新しい判定ロジックは一切追加していない。対象になる条件は既存のクラス付与
+     (isTarget/isHandEvoTarget/canEvolveViaTree等、render()側)がそのまま担っている) */
+  @keyframes selectable-pulse-gold{
+    0%,100%{ box-shadow:0 0 0 2px var(--gold-bright), 0 0 10px rgba(216,169,66,.7); }
+    50%{ box-shadow:0 0 0 3px var(--gold-bright), 0 0 18px rgba(216,169,66,.95); }
+  }
+  @keyframes selectable-pulse-red{
+    0%,100%{ box-shadow:0 0 0 3px var(--red-bright), 0 0 12px var(--red-bright); }
+    50%{ box-shadow:0 0 0 4px var(--red-bright), 0 0 22px var(--red-bright); }
+  }
+  @keyframes selectable-pulse-green{
+    0%,100%{ box-shadow:0 0 0 3px #9be89b, 0 0 12px #9be89b; }
+    50%{ box-shadow:0 0 0 4px #9be89b, 0 0 22px #9be89b; }
+  }
   /* 進化ツリーで今すぐ進化できるデジモンは枠を金色に強調(選択中/攻撃対象の
      枠色が優先されるよう、このルールをそれらより前に置いている) */
-  .card-digimon.can-evolve-tree{ border-color:var(--gold-bright); box-shadow:0 0 0 2px var(--gold-bright), 0 0 10px rgba(216,169,66,.7); }
+  .card-digimon.can-evolve-tree{ border-color:var(--gold-bright); animation:selectable-pulse-gold 1.3s ease-in-out infinite; }
   .card-digimon.selected{ box-shadow:0 0 0 3px var(--gold-bright), 0 0 16px var(--gold-bright); transform:translateY(-5px); }
-  .card-digimon.target{ box-shadow:0 0 0 3px var(--red-bright), 0 0 14px var(--red-bright); cursor:crosshair; }
-  .card-digimon.hand-evolve-target{ box-shadow:0 0 0 3px #9be89b, 0 0 16px #9be89b; cursor:pointer; }
+  .card-digimon.target{ cursor:crosshair; animation:selectable-pulse-red 1.1s ease-in-out infinite; }
+  .card-digimon.hand-evolve-target{ cursor:pointer; animation:selectable-pulse-green 1.1s ease-in-out infinite; }
   .hand-evolve-cond{
     position:absolute; top:100%; left:50%; transform:translateX(-50%);
     margin-top:4px; white-space:nowrap; z-index:5; pointer-events:none;
@@ -1345,7 +1381,11 @@
   #dragLine{ stroke:var(--gold-bright); stroke-width:3; fill:none; stroke-linecap:round; filter:drop-shadow(0 0 5px rgba(240,195,104,.85)); }
   .drag-feeder-line{ stroke:var(--gold-bright); stroke-width:2; fill:none; stroke-linecap:round; opacity:.6; filter:drop-shadow(0 0 3px rgba(240,195,104,.6)); }
   .card-digimon.drop-target{ box-shadow:0 0 0 4px #ffe066, 0 0 22px #ffe066; transform:translateY(-4px) scale(1.08); z-index:10; }
-  .zone.drop-target-zone{ box-shadow:0 0 0 3px #ffe066 inset, 0 0 18px #ffe066; }
+  @keyframes selectable-pulse-amber-inset{
+    0%,100%{ box-shadow:0 0 0 3px #ffe066 inset, 0 0 14px #ffe066; }
+    50%{ box-shadow:0 0 0 4px #ffe066 inset, 0 0 22px #ffe066; }
+  }
+  .zone.drop-target-zone{ animation:selectable-pulse-amber-inset 1.1s ease-in-out infinite; }
   .mana-row.drop-target-zone{ box-shadow:0 0 0 3px #ffe066 inset, 0 0 18px #ffe066; border-radius:8px; }
   .card-hand.dragging-source, .card-digimon.dragging-source{ opacity:.35; }
   .drag-launch{ animation: drag-bounce .3s ease; }
@@ -1932,9 +1972,9 @@
     box-shadow:0 0 0 4px var(--gold-bright), 0 0 24px 6px var(--gold-bright);
     transition:none;
   }
-  .card-hand.unaffordable{ opacity:.4; cursor:not-allowed; }
+  .card-hand.unaffordable{ opacity:.4; filter:grayscale(.5); cursor:not-allowed; }
   .card-hand.unaffordable:hover{ transform:none; }
-  .card-hand.evolve-armed{ box-shadow:0 0 0 3px #9be89b, 0 0 16px #9be89b; transform:translateY(-6px); }
+  .card-hand.evolve-armed{ box-shadow:0 0 0 3px #9be89b, 0 0 16px #9be89b; transform:translateY(-6px); animation:selectable-pulse-green 1.1s ease-in-out infinite; }
 
   .controls{ display:flex; align-items:center; justify-content:center; gap:14px; padding:4px 0; flex-wrap:wrap; }
   /* 自分/相手の立ち絵(2026-07-20追加)。flex-basis:100%で.controls内の他要素とは別行に
@@ -1963,9 +2003,19 @@
     color:#241a05; border:none; border-radius:8px; padding:12px 22px; cursor:pointer;
     box-shadow:0 3px 0 #8a6a1f;
   }
-  .end-turn:disabled{ opacity:.35; cursor:not-allowed; }
+  .end-turn{ transition:filter .15s ease, box-shadow .15s ease, opacity .15s ease; }
+  .end-turn:disabled{ opacity:.32; cursor:not-allowed; filter:grayscale(.6); box-shadow:none; }
+  .end-turn:disabled:hover{ filter:grayscale(.6); box-shadow:none; }
   .end-turn:active{ transform:translateY(2px); box-shadow:none; }
   .end-turn:hover{ box-shadow:0 3px 0 #8a6a1f, 0 0 14px var(--gold-bright); filter:brightness(1.08); }
+  /* 2026-09-06追加(UI改修Phase3):「今すぐ実行できる」ことを主張する控えめな待機発光
+     (常時ではなく5秒に一度だけ短く光る=常時アニメだと逆にうるさいための調整)。
+     disabled状態は上のルールで打ち消されるため、実行可能な時だけ働く */
+  @keyframes end-turn-ready-glow{
+    0%,92%,100%{ box-shadow:0 3px 0 #8a6a1f; }
+    96%{ box-shadow:0 3px 0 #8a6a1f, 0 0 16px var(--gold-bright); }
+  }
+  #endTurnBtn:not(:disabled){ animation:end-turn-ready-glow 5s ease-in-out infinite; }
   .turn-indicator{ font-family:'Space Mono'; font-weight:700; font-size:13px; color:#fff; text-shadow:var(--txt-outline); }
   .turn-indicator.mine{ color:var(--gold-bright); }
   /* CPU手番中の「考え中」表示(2026-07-28追加)。テキスト末尾に明滅するドットを追加する
@@ -2169,6 +2219,22 @@
   .evo-node.rainbow-card{ background:linear-gradient(135deg, #e05050, #e0c040, #50c060, #50a0e0, #a060e0); border-color:#fff; }
   .evo-node.mana-hidden{ background:var(--mana-back); border-color:#6b6148; }
   .evo-node.current{ border-color:#fff2cf; box-shadow:0 0 14px rgba(255,255,255,.25); }
+  /* 2026-09-06追加(UI改修Phase3):カード詳細画面(showDigimonDetail等、1枚だけを
+     大きく見せる用途)をゲーム内ウィンドウらしく拡大する。.evo-node.currentは
+     進化ツリー/パック報酬選択等の「複数候補から選ぶ」画面でも使われているが、
+     それらは必ず.picker-selectedが併記される実装になっているため、
+     :not(.picker-selected)で「単体カード詳細表示」だけを安全に区別できる
+     (JSは一切変更せず、既存のクラス付与パターンをCSS側だけで利用している) */
+  .evo-node.current:not(.picker-selected){
+    width:min(44vw, 260px); min-height:unset; aspect-ratio:0.663;
+    border-width:3px; padding:8px 9px 10px;
+    box-shadow:0 0 22px rgba(255,255,255,.3), 0 10px 30px rgba(0,0,0,.5);
+  }
+  .evo-node.current:not(.picker-selected) .cd-cost{ font-size:15px; width:30px; height:30px; }
+  .evo-node.current:not(.picker-selected) .cd-stats{ font-size:15px; }
+  @media (max-height:600px) and (orientation:landscape){
+    .evo-node.current:not(.picker-selected){ width:min(30vh, 200px); }
+  }
   /* 複数選択ピッカー(天空の門/ホーリーエンジェモン等):選択中のカードにチェックマーク+
      金枠の強調表示、選択数の「x/y」表示も目立たせる(2026-07-19追加) */
   .evo-node.picker-selected{ border-color:var(--gold-bright); box-shadow:0 0 16px rgba(240,195,104,.6); }
@@ -2474,9 +2540,6 @@
      対戦画面の縦方向サイズだけを詰める新しいブレークポイントを追加する。
      カード自体の内容(CARDS/ゲームロジック)には一切触れない、純粋な寸法調整のみ */
   @media (max-height:520px) and (orientation:landscape){
-    /* バトル画面上部のタイトル/サブタイトルは対局中は不要な装飾なので隠し、
-       縦方向の余白をまるごと対戦盤面に回す(メインメニュー等、他画面には影響しない) */
-    #battleScreen > h1.title, #battleScreen > .subtitle{ display:none; }
     .arena{ gap:2px; padding:0 6px 2px; }
     .player-zone{ gap:2px; }
     .mana-row{ min-height:26px; gap:3px; padding:2px 6px; }
@@ -2931,7 +2994,7 @@
       <div class="mana-row" id="aiManaRow">
         <div class="dark-exile-block ai-dark-exile">
           <div class="zone exile-area" id="aiExileArea"><span class="zone-label">追放</span></div>
-          <div class="zone dark-area" id="aiDarkArea"><span class="zone-label">ダーク</span></div>
+          <div class="zone dark-area" id="aiDarkArea"><span class="zone-label">ダークエリア</span></div>
         </div>
         <span class="mana-label" id="aiHandLabel">手札</span>
         <span class="mana-label mana-label-stack" id="aiManaLabel">相手マナ</span>
@@ -2952,7 +3015,7 @@
       <div class="turn-indicator mine" id="turnIndicator">あなたのターン</div>
       <div class="dark-exile-block player-side-stack">
         <div class="zone exile-area" id="playerExileArea"><span class="zone-label">追放</span></div>
-        <div class="zone dark-area" id="playerDarkArea"><span class="zone-label">ダーク</span></div>
+        <div class="zone dark-area" id="playerDarkArea"><span class="zone-label">ダークエリア</span></div>
       </div>
       <button class="end-turn" id="undoBtn">一手戻す</button>
       <button class="end-turn secondary hidden" id="storyItemBtn">🎒 アイテム</button>
