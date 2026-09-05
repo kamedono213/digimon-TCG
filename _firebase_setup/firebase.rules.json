@@ -1,0 +1,137 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomId": {
+        ".read": "auth != null",
+
+        ".write": "auth != null && ((!data.exists() && newData.child('hostUid').val() === auth.uid) || (data.exists() && !newData.exists() && auth.uid === data.child('hostUid').val()))",
+
+        "hostUid": {
+          ".write": "auth != null && !data.exists() && newData.val() === auth.uid"
+        },
+        "guestUid": {
+          ".write": "auth != null && newData.val() === auth.uid && (data.val() === null || data.val() === auth.uid) && auth.uid !== root.child('rooms').child($roomId).child('hostUid').val()"
+        },
+        "status": {
+          ".write": "auth != null && (auth.uid === root.child('rooms').child($roomId).child('hostUid').val() || auth.uid === root.child('rooms').child($roomId).child('guestUid').val())"
+        },
+        "firstPlayer": {
+          ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('hostUid').val()"
+        },
+        "battleStartedAt": {
+          ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('hostUid').val()"
+        },
+        "players": {
+          "host": {
+            ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('hostUid').val()"
+          },
+          "guest": {
+            ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('guestUid').val()"
+          }
+        },
+        /* Lightweight port (not mushijingi's host-authority command model): the
+           existing digimon-TCG engine already trusts whichever side just finished
+           acting to broadcast the full board state as one message, so this just
+           relays that message - one write-owned node per seat (mirrors
+           mushijingi's separate battle/pendingAction split, but symmetric since
+           both seats send the same kind of message here, not commands). Each
+           side subscribes to the OTHER seat's node only, so nobody ever
+           processes their own write as if it were incoming. This is a
+           deliberately weaker per-move guarantee than mushijingi's host-only
+           authority, accepted as a tradeoff to avoid touching battle engine
+           internals (summon/evolve/attack/spell handlers stay untouched). */
+        "state": {
+          "host": {
+            ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('hostUid').val()"
+          },
+          "guest": {
+            ".write": "auth != null && auth.uid === root.child('rooms').child($roomId).child('guestUid').val()"
+          }
+        }
+      }
+    },
+    "tradeRooms": {
+      "$roomId": {
+        ".read": "auth != null",
+
+        ".write": "auth != null && ((!data.exists() && newData.child('hostUid').val() === auth.uid) || (data.exists() && !newData.exists() && auth.uid === data.child('hostUid').val()))",
+
+        "hostUid": {
+          ".write": "auth != null && !data.exists() && newData.val() === auth.uid"
+        },
+        "guestUid": {
+          ".write": "auth != null && newData.val() === auth.uid && (data.val() === null || data.val() === auth.uid) && auth.uid !== root.child('tradeRooms').child($roomId).child('hostUid').val()"
+        },
+        "status": {
+          ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+        },
+        "cancelReason": {
+          ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+        },
+        "executingBy": {
+          ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+        },
+        "executedTradeId": {
+          ".write": "auth != null && !data.exists() && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+        },
+        "players": {
+          "host": {
+            "uid": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val()" },
+            "name": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val()" },
+            "connected": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val()" },
+            "lastSeen": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val()" },
+            "offer": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val()" },
+            "accepted": {
+              ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()) && (newData.val() === false || auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val())"
+            },
+            "finalConfirmed": {
+              ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()) && (newData.val() === false || auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val())"
+            }
+          },
+          "guest": {
+            "uid": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()" },
+            "name": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()" },
+            "connected": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()" },
+            "lastSeen": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()" },
+            "offer": { ".write": "auth != null && auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()" },
+            "accepted": {
+              ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()) && (newData.val() === false || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+            },
+            "finalConfirmed": {
+              ".write": "auth != null && (auth.uid === root.child('tradeRooms').child($roomId).child('hostUid').val() || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val()) && (newData.val() === false || auth.uid === root.child('tradeRooms').child($roomId).child('guestUid').val())"
+            }
+          }
+        }
+      }
+    },
+    "userCollections": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid",
+        "$cardId": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('activeTradePartner').child($uid).val() === auth.uid)",
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        }
+      }
+    },
+    "activeTradePartner": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "saves": {
+      "$saveId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "current": {
+          ".validate": "newData.hasChildren(['saveVersion', 'updatedAt', 'collection', 'saved_decks'])"
+        }
+      }
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

@@ -9,6 +9,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- 2026-09-05追加:ルームコード対戦・ID引き継ぎ・トレード用(firebase-online.js)。
+     蟲神器プロジェクトから移植した基盤。ゲームデータ・ゲームロジックには関与しない -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="firebase-online.js"></script>
 <style>
   .menu-screen{
     max-width:900px; margin:0 auto; padding:20px 16px 60px; text-align:center;
@@ -2457,6 +2463,8 @@
         <button class="menu-btn" id="btnCollection" data-desc="これまでに入手した全カードを閲覧する">⑤ コレクション</button>
         <button class="menu-btn" id="btnTamer" data-desc="立ち絵・アイコン・スリーブ・プレイマット等の装備を変更する">⑥ テイマー</button>
         <button class="menu-btn" id="btnDebugMode" data-desc="全カードを枚数無制限で使える検証用の対戦モード">⑦ デバッグモード</button>
+        <button class="menu-btn" id="btnTrade" data-desc="ルームコードで別端末のプレイヤーとカードを交換する">⑧ トレード</button>
+        <button class="menu-btn" id="btnSaveSync" data-desc="IDを使って所持カード・デッキ・進行状況を別端末へ引き継ぐ">⑨ データ引き継ぎ</button>
       </div>
       <div class="menu-showcase" id="menuShowcase">
         <img class="menu-showcase-portrait" id="menuShowcasePortrait" src="" alt="">
@@ -26278,6 +26286,11 @@ let netIsHost = false;
 let netMyDeckIds = null;
 let netOpponentDeckIds = null;
 let netOnDataChannelOpen = null;
+/* 2026-09-05追加:通信経路の切替フラグ。'webrtc'(既存、手動シグナリング)か
+   'firebase'(蟲神器から移植したルームコード方式、firebase-online.js)かを
+   netSend()が見て振り分ける。既存のnetSendTurnState/netScheduleLiveBroadcast等
+   (「手番終了時に盤面を丸ごと送る」既存ロジック)は一切変更しない */
+let netTransportMode = 'webrtc';
 
 function netCreateConnection(){
   return new RTCPeerConnection({ iceServers:[{urls:'stun:stun.l.google.com:19302'}] });
@@ -26307,6 +26320,7 @@ function netSetupDataChannel(ch){
   };
 }
 function netSend(msg){
+  if(netTransportMode==='firebase'){ fbSendRoomMessage(msg); return; }
   if(netDataChannel && netDataChannel.readyState==='open'){
     netDataChannel.send(JSON.stringify(msg));
   }
@@ -26329,19 +26343,31 @@ function netShowEntryChoice(){
   const overlay = document.getElementById('overlay');
   overlay.classList.remove('hidden');
   document.getElementById('overlayTitle').textContent = 'オンラインバトル';
-  document.getElementById('overlayText').textContent = 'サーバーを使わず、接続コードを1往復半交換して直接つなぐ方式です。うまくいかない場合は簡易ローカルサーバー経由での起動をお試しください。';
+  document.getElementById('overlayText').textContent = '6桁のルームコードで簡単に対戦できます。うまくいかない場合は、サーバーを使わない接続コード方式(下の予備の方法)もお試しいただけます。';
   document.getElementById('evoTreeRow').classList.add('hidden');
   const choices = document.getElementById('overlayChoices');
   choices.classList.remove('hidden');
   choices.innerHTML = '';
+  /* 2026-09-05追加:蟲神器から移植したルームコード方式(推奨)。既存のSDP方式は
+     「予備の方法」として下に残す(何も削除しない) */
+  const fbHostBtn = document.createElement('button');
+  fbHostBtn.className = 'end-turn';
+  fbHostBtn.textContent = 'ルームを作成する(ルームコード・推奨)';
+  fbHostBtn.onclick = fbNetShowHostScreen;
+  choices.appendChild(fbHostBtn);
+  const fbJoinBtn = document.createElement('button');
+  fbJoinBtn.className = 'end-turn secondary';
+  fbJoinBtn.textContent = 'ルームコードで参加する';
+  fbJoinBtn.onclick = fbNetShowJoinScreen;
+  choices.appendChild(fbJoinBtn);
   const hostBtn = document.createElement('button');
-  hostBtn.className = 'end-turn';
-  hostBtn.textContent = 'ルームを作成する(ホスト)';
+  hostBtn.className = 'end-turn secondary';
+  hostBtn.textContent = '予備:接続コードでルーム作成(ホスト)';
   hostBtn.onclick = netShowHostScreen;
   choices.appendChild(hostBtn);
   const joinBtn = document.createElement('button');
   joinBtn.className = 'end-turn secondary';
-  joinBtn.textContent = 'コードで参加する(ゲスト)';
+  joinBtn.textContent = '予備:接続コードで参加する(ゲスト)';
   joinBtn.onclick = netShowJoinScreen;
   choices.appendChild(joinBtn);
   const btn = document.getElementById('overlayBtn');
@@ -26468,6 +26494,11 @@ function netCleanupConnection(){
   /* 次回接続時に前回の値が残らないようリセットする(2026-07-25追加、再戦・別ルーム作成対応) */
   netFirstIsHostResolved = null;
   netIsHost = false;
+  /* 2026-09-05追加:ルームコード方式(firebase-online.js)使用時はそちらの後片付けも
+     ここで合流させる(対局終了時のnetFinishOnlineMatch等、既存の全呼び出し箇所を
+     変更せずに済むようにするため) */
+  if(netTransportMode==='firebase' && typeof fbLeaveRoom==='function') fbLeaveRoom();
+  netTransportMode = 'webrtc';
 }
 
 /* ---------- デッキ選択→対局開始 ---------- */
@@ -26710,6 +26741,9 @@ document.getElementById('btnFreeBattle').onclick = showFreeBattleSetup;
 document.getElementById('btnShieldBattle').onclick = startShieldBattle;
 document.getElementById('btnDraftBattle').onclick = startDraftBattle;
 document.getElementById('btnDebugMode').onclick = startDebugMode;
+/* 2026-09-05追加:トレード/データ引き継ぎ(firebase-online.js、蟲神器から移植) */
+document.getElementById('btnTrade').onclick = ()=>{ if(typeof fbShowTradeEntryScreen==='function') fbShowTradeEntryScreen(); };
+document.getElementById('btnSaveSync').onclick = ()=>{ if(typeof fbShowSaveSyncScreen==='function') fbShowSaveSyncScreen(); };
 
 /* メニュー系のボタン(トップメニュー・戻るボタン)は個別にSE配線せず、
    イベント委任で一括して鳴らす */
@@ -26826,7 +26860,11 @@ function initHoloCards(){
 initHoloCards();
 initAudioSettingsUI();
 initBgm();
-loadMeta().then(showMainMenu);
+loadMeta().then(showMainMenu).then(()=>{
+  /* 2026-09-05追加:起動時に中断中のルームコード対戦が無いか確認する
+     (firebase-online.js、蟲神器のsession.ts相当) */
+  if(typeof fbNetOfferReconnectIfAny==='function') fbNetOfferReconnectIfAny();
+});
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }

@@ -42,6 +42,7 @@ jobs:
             --exclude 'card_images' \
             --exclude 'backups' \
             --exclude 'index.new.html' \
+            --exclude '_firebase_setup' \
             ./ _site/
 
       - name: Upload artifact
