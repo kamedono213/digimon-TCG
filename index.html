@@ -2505,6 +2505,87 @@
     .mana-row{ min-height:22px; }
     .mana-card{ width:26px; height:36px; }
   }
+
+  /* ==================== 下部タブナビゲーション(2026-09-06追加、UI改修Phase2) ====================
+     蟲神器のtab-bar-v2(発光プレート+アイコン+ラベル、下端固定・safe-area対応)の設計思想を
+     デジモンTCG既存のトークン(--bg/--panel/--gold/--gold-bright/--ink/--ink-dim)で再構成した
+     もの。色や素材は蟲神器のものをコピーせず、既存パレットをそのまま使う */
+  .bottom-tab-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:500;
+    display:grid; grid-template-columns:repeat(5, 1fr);
+    height:58px;
+    padding-bottom:env(safe-area-inset-bottom);
+    padding-left:env(safe-area-inset-left);
+    padding-right:env(safe-area-inset-right);
+  }
+  .bottom-tab-bar.hidden{ display:none; }
+  .bottom-tab-bar__bg{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(35,31,25,.7) 0%, rgba(23,21,18,.96) 45%, #171512 100%);
+    border-top:1px solid var(--line);
+    box-shadow:0 -6px 18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .tab-bar-item{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    background:none; border:none; color:var(--ink-dim); padding:0;
+    font-family:'Zen Kaku Gothic New', sans-serif; font-size:10px; font-weight:700;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tab-bar-item:not(:first-child)::after{
+    content:''; position:absolute; left:0; top:20%; bottom:20%; width:1px;
+    background:linear-gradient(180deg, transparent, var(--line), transparent);
+  }
+  .tab-bar-item__icon{
+    font-size:19px; line-height:1; filter:grayscale(.6) brightness(.8);
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .tab-bar-item__label{ transition:color .15s ease; }
+  .tab-bar-item__plate{
+    position:absolute; inset:4px 8px; border-radius:10px; opacity:0; pointer-events:none;
+    transition:opacity .18s ease;
+  }
+  .tab-bar-item.is-active{ color:var(--gold-bright); }
+  .tab-bar-item.is-active .tab-bar-item__plate{
+    opacity:1;
+    background:radial-gradient(ellipse at center 30%, rgba(240,195,104,.24), transparent 72%);
+    border:1px solid rgba(240,195,104,.6);
+    box-shadow:0 0 14px rgba(240,195,104,.4), inset 0 0 10px rgba(240,195,104,.14);
+  }
+  .tab-bar-item.is-active .tab-bar-item__icon{ filter:none; transform:translateY(-1px); }
+  .tab-bar-item:active .tab-bar-item__icon{ transform:scale(.9); }
+  /* タブバーの下にコンテンツが隠れないよう、常設ナビゲーション対象画面の下余白を広げる */
+  .menu-screen{ padding-bottom:calc(60px + env(safe-area-inset-bottom)); }
+  /* ホーム画面の設定系ショートカット(デバッグモード・データ引き継ぎ)。フリーバトル等の
+     主要機能と同じ.menu-btnにはせず、控えめな見た目にして主従関係を明確にする */
+  .home-shortcut-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:22px; }
+  .home-shortcut-btn{
+    font-family:'Zen Kaku Gothic New', sans-serif; font-size:12px; font-weight:700; color:var(--ink-dim);
+    background:rgba(216,169,66,.08); border:1px solid var(--line); border-radius:20px;
+    padding:8px 16px; cursor:pointer; transition:color .15s ease, border-color .15s ease;
+  }
+  .home-shortcut-btn:hover{ color:var(--gold-bright); border-color:var(--gold); }
+  /* バトルタブ等、下部タブの着地画面のタイトルは常設ナビの分だけ縦方向の余白を詰める */
+  .tab-hub-title{ margin-top:20px; }
+  /* コレクション/ショップ画面ヘッダーに追加した関連機能への導線(トレード/テイマー) */
+  .screen-header-link-btn{
+    font-family:'Zen Kaku Gothic New', sans-serif; font-size:12px; font-weight:700; color:var(--gold-bright);
+    background:rgba(216,169,66,.12); border:1px solid var(--gold); border-radius:16px;
+    padding:6px 12px; cursor:pointer; white-space:nowrap;
+  }
+  .screen-header-link-btn:hover{ background:rgba(216,169,66,.22); }
+  @media (max-width:600px){
+    .bottom-tab-bar{ height:52px; }
+    .tab-bar-item__icon{ font-size:17px; }
+    .tab-bar-item__label{ font-size:9px; }
+    .menu-screen{ padding-bottom:calc(54px + env(safe-area-inset-bottom)); }
+  }
+  @media (max-height:520px) and (orientation:landscape){
+    .bottom-tab-bar{ height:40px; }
+    .tab-bar-item__icon{ font-size:15px; }
+    .tab-bar-item__label{ font-size:7.5px; }
+    .menu-screen{ padding-bottom:calc(42px + env(safe-area-inset-bottom)); }
+  }
 </style>
 </head>
 <body>
@@ -2543,23 +2624,33 @@
     <div class="menu-coin" id="menuCoinDisplay">💰 0 デジコイン</div>
     <div class="main-menu-layout">
       <div class="menu-buttons">
-        <button class="menu-btn" id="btnSoloPlay" data-desc="ストーリー・ローグライク・リミテッド・デッキ編集・トーナメントなど1人用モード">① ソロプレイ</button>
-        <button class="menu-btn" id="btnBattle" data-desc="通常デッキでCPUと対戦する">② フリーバトル</button>
-        <button class="menu-btn" id="btnNetBattle" data-desc="別端末のプレイヤーとオンラインで対戦する">③ 通信対戦</button>
-        <button class="menu-btn" id="btnShop" data-desc="デジコインでパック・スターターデッキ・コスメアイテムを購入する">④ ショップ</button>
-        <button class="menu-btn" id="btnCollection" data-desc="これまでに入手した全カードを閲覧する">⑤ コレクション</button>
-        <button class="menu-btn" id="btnTamer" data-desc="立ち絵・アイコン・スリーブ・プレイマット等の装備を変更する">⑥ テイマー</button>
-        <button class="menu-btn" id="btnDebugMode" data-desc="全カードを枚数無制限で使える検証用の対戦モード">⑦ デバッグモード</button>
-        <button class="menu-btn" id="btnTrade" data-desc="ルームコードで別端末のプレイヤーとカードを交換する">⑧ トレード</button>
-        <button class="menu-btn" id="btnSaveSync" data-desc="IDを使って所持カード・デッキ・進行状況を別端末へ引き継ぐ">⑨ データ引き継ぎ</button>
+        <button class="menu-btn" id="btnSoloPlay" data-desc="ストーリー・ローグライク・リミテッド・デッキ編集・トーナメントなど1人用モード">ソロプレイ</button>
       </div>
       <div class="menu-showcase" id="menuShowcase">
         <img class="menu-showcase-portrait" id="menuShowcasePortrait" src="" alt="">
         <img class="menu-showcase-hero hidden" id="menuShowcaseHero" src="" alt="">
       </div>
     </div>
+    <!-- 2026-09-06追加(UI改修Phase2):下部タブに移動した機能以外の、アカウント/設定レベルの
+         ショートカット。フリーバトル/通信対戦/ショップ/コレクション/テイマー/トレードは
+         下部タブ(バトル/デッキ/カード/ショップ)へ移動したためここには置かない -->
+    <div class="home-shortcut-row">
+      <button class="home-shortcut-btn" id="btnDebugMode" data-desc="全カードを枚数無制限で使える検証用の対戦モード">🛠 デバッグモード</button>
+      <button class="home-shortcut-btn" id="btnSaveSync" data-desc="IDを使って所持カード・デッキ・進行状況を別端末へ引き継ぐ">🔗 データ引き継ぎ</button>
+    </div>
   </div>
   <div id="menuHoverDesc" class="hidden"></div>
+
+  <!-- 2026-09-06追加(UI改修Phase2):「バトル」タブの着地画面。既存のbattleMenuScreen/
+       netBattleMenuScreen自体は変更せず、その2つへの入口をここに集約する -->
+  <div id="battleHubScreen" class="menu-screen hidden">
+    <h1 class="title tab-hub-title">バトル</h1>
+    <div class="menu-buttons">
+      <button class="menu-btn" id="battleHubFreeBtn" data-desc="通常デッキでCPUと対戦する">CPU対戦(フリーバトル)</button>
+      <button class="menu-btn" id="battleHubNetBtn" data-desc="別端末のプレイヤーと対戦する(同じ端末での対戦・ルームコードでのオンライン対戦)">通信対戦</button>
+      <button class="home-shortcut-btn" id="battleHubDebugBtn" data-desc="全カードを枚数無制限で使える検証用の対戦モード">🛠 デバッグモード</button>
+    </div>
+  </div>
 
   <div id="soloPlayMenuScreen" class="menu-screen hidden">
     <div class="screen-header">
@@ -2891,6 +2982,38 @@
   </div>
 
   </div>
+
+  <!-- 2026-09-06追加(UI改修Phase2):下部タブナビゲーション。常にDOM上に存在し、
+       表示/非表示・現在地ハイライトはupdateBottomTabBar()(showScreen()から呼ばれる)が
+       一括管理する。既存の各画面・遷移関数は一切変更しない -->
+  <nav id="bottomTabBar" class="bottom-tab-bar hidden">
+    <div class="bottom-tab-bar__bg"></div>
+    <button class="tab-bar-item" data-tab="home">
+      <span class="tab-bar-item__plate"></span>
+      <span class="tab-bar-item__icon">🏠</span>
+      <span class="tab-bar-item__label">ホーム</span>
+    </button>
+    <button class="tab-bar-item" data-tab="battle">
+      <span class="tab-bar-item__plate"></span>
+      <span class="tab-bar-item__icon">⚔️</span>
+      <span class="tab-bar-item__label">バトル</span>
+    </button>
+    <button class="tab-bar-item" data-tab="deck">
+      <span class="tab-bar-item__plate"></span>
+      <span class="tab-bar-item__icon">🃏</span>
+      <span class="tab-bar-item__label">デッキ</span>
+    </button>
+    <button class="tab-bar-item" data-tab="card">
+      <span class="tab-bar-item__plate"></span>
+      <span class="tab-bar-item__icon">📚</span>
+      <span class="tab-bar-item__label">カード</span>
+    </button>
+    <button class="tab-bar-item" data-tab="shop">
+      <span class="tab-bar-item__plate"></span>
+      <span class="tab-bar-item__icon">🛒</span>
+      <span class="tab-bar-item__label">ショップ</span>
+    </button>
+  </nav>
 
   <div id="toastContainer"></div>
   <div id="turnBanner"></div>
@@ -4128,10 +4251,38 @@ function setRandomBackground(){
 }
 
 function showScreen(id){
-  ['mainMenuScreen','soloPlayMenuScreen','storySubMenuScreen','battleMenuScreen','limitedMenuScreen','netBattleMenuScreen','deckEditScreen','shopScreen','collectionScreen','battleScreen','tamerScreen','storyMapScreen','storyShopScreen','rogueMapScreen','rogueShopScreen','rogueSkillTreeScreen','draftSetupScreen','draftPickScreen'].forEach(sid=>{
+  ['mainMenuScreen','battleHubScreen','soloPlayMenuScreen','storySubMenuScreen','battleMenuScreen','limitedMenuScreen','netBattleMenuScreen','deckEditScreen','shopScreen','collectionScreen','battleScreen','tamerScreen','storyMapScreen','storyShopScreen','rogueMapScreen','rogueShopScreen','rogueSkillTreeScreen','draftSetupScreen','draftPickScreen'].forEach(sid=>{
     document.getElementById(sid).classList.toggle('hidden', sid!==id);
   });
   setRandomBackground();
+  if(typeof updateBottomTabBar==='function') updateBottomTabBar(id);
+}
+/* 2026-09-06追加(UI改修Phase2、下部タブナビゲーション):showScreen()に渡されたidから
+   ①タブバー自体を表示するか(実対戦画面・ストーリー/ローグ/ドラフトのラン中画面では隠す)
+   ②表示する場合、どのタブを「現在地」としてハイライトするか、を決める。
+   既存のscreenId一覧・各画面の中身・遷移ロジックは一切変更しない(表示/非表示の
+   最終段でこの1関数を差し込むだけ) */
+const TAB_BAR_HIDDEN_SCREENS = new Set([
+  'battleScreen','storyMapScreen','storyShopScreen','rogueMapScreen','rogueShopScreen',
+  'rogueSkillTreeScreen','draftSetupScreen','draftPickScreen'
+]);
+const SCREEN_TO_TAB = {
+  mainMenuScreen:'home', soloPlayMenuScreen:'home', storySubMenuScreen:'home',
+  battleHubScreen:'battle', battleMenuScreen:'battle', netBattleMenuScreen:'battle', limitedMenuScreen:'home',
+  deckEditScreen:'deck',
+  collectionScreen:'card',
+  shopScreen:'shop', tamerScreen:'shop'
+};
+function updateBottomTabBar(screenId){
+  const bar = document.getElementById('bottomTabBar');
+  if(!bar) return;
+  const hidden = TAB_BAR_HIDDEN_SCREENS.has(screenId);
+  bar.classList.toggle('hidden', hidden);
+  if(hidden) return;
+  const activeTab = SCREEN_TO_TAB[screenId] || null;
+  bar.querySelectorAll('.tab-bar-item').forEach(btn=>{
+    btn.classList.toggle('is-active', btn.dataset.tab===activeTab);
+  });
 }
 
 function showMainMenu(){
@@ -24640,7 +24791,9 @@ document.getElementById('tamerTabSleeve').onclick = ()=> setTamerTab('sleeve');
 document.getElementById('tamerTabCoin').onclick = ()=> setTamerTab('coin');
 document.getElementById('tamerTabPlaymat').onclick = ()=> setTamerTab('playmat');
 document.getElementById('tamerTabIcon').onclick = ()=> setTamerTab('icon');
-document.getElementById('tamerBackBtn').onclick = showMainMenu;
+/* 2026-09-06修正(UI改修Phase2):テイマーは「ショップ」タブの中の導線から開くようにしたため、
+   戻り先もトップメニューではなくショップにする */
+document.getElementById('tamerBackBtn').onclick = showShop;
 
 /* テイマー画面は「購入済みのものから選んで装備する」画面(購入はショップで行う)。
    立ち絵タブ(portrait)だけは、ショップで買えるCOSMETIC_PORTRAITSに加えて
@@ -26335,15 +26488,21 @@ document.getElementById('storySubCollectionBtn').onclick = ()=>{
   showCollection();
 };
 
-document.getElementById('btnBattle').onclick = ()=> showScreen('battleMenuScreen');
-document.getElementById('battleMenuBackBtn').onclick = showMainMenu;
+/* 2026-09-06修正(UI改修Phase2):旧トップメニューのbtnBattle/btnNetBattleは下部タブの
+   「バトル」内の新設battleHubScreenへボタンごと移動した(battleHubFreeBtn/battleHubNetBtn)。
+   battleMenuScreen/netBattleMenuScreenという画面自体・その中の他ボタンの配線は変更しない。
+   「戻る」の行き先だけ、旧「トップメニューへ」から新設の「バトルタブの入口(battleHubScreen)へ」
+   に変更する(下部タブ導入により「バトル」から出た時はバトルタブの入口に戻るのが自然なため) */
+document.getElementById('battleHubFreeBtn').onclick = ()=> showScreen('battleMenuScreen');
+document.getElementById('battleHubNetBtn').onclick = ()=> showScreen('netBattleMenuScreen');
+document.getElementById('battleHubDebugBtn').onclick = ()=> startDebugMode();
+document.getElementById('battleMenuBackBtn').onclick = ()=> showScreen('battleHubScreen');
 document.getElementById('btnFreeDeckEdit').onclick = ()=>{
   deckEditorState.returnTo = ()=> showScreen('battleMenuScreen');
   openDeckEditor('all', null, false);
 };
 document.getElementById('limitedMenuBackBtn').onclick = ()=> showScreen('soloPlayMenuScreen');
-document.getElementById('btnNetBattle').onclick = ()=> showScreen('netBattleMenuScreen');
-document.getElementById('netBattleMenuBackBtn').onclick = showMainMenu;
+document.getElementById('netBattleMenuBackBtn').onclick = ()=> showScreen('battleHubScreen');
 document.getElementById('btnOfflineLocal').onclick = startOfflineLocalBattle;
 document.getElementById('btnOnlineBattle').onclick = ()=> netShowEntryChoice();
 document.getElementById('btnNetDeckEdit').onclick = ()=>{
@@ -26825,22 +26984,59 @@ function launchHotseatBattle(deck1Ids, deck2Ids){
     onGameEnd: ()=> showMainMenu()
   });
 }
-document.getElementById('btnShop').onclick = showShop;
-/* 2026-07-29:ショップ/リミテッド/ストーリーが全てstoryCollectionを共有するようになったため、
-   トップメニューの「コレクション」もそちらを表示する(以前の'main'は実質空になるため) */
-document.getElementById('btnCollection').onclick = ()=>{
-  collectionDataSource = 'story';
-  collectionReturnTo = null;
-  showCollection();
-};
-document.getElementById('btnTamer').onclick = showTamer;
 document.getElementById('btnFreeBattle').onclick = showFreeBattleSetup;
 document.getElementById('btnShieldBattle').onclick = startShieldBattle;
 document.getElementById('btnDraftBattle').onclick = startDraftBattle;
 document.getElementById('btnDebugMode').onclick = startDebugMode;
 /* 2026-09-05追加:トレード/データ引き継ぎ(firebase-online.js、蟲神器から移植) */
-document.getElementById('btnTrade').onclick = ()=>{ if(typeof fbShowTradeEntryScreen==='function') fbShowTradeEntryScreen(); };
 document.getElementById('btnSaveSync').onclick = ()=>{ if(typeof fbShowSaveSyncScreen==='function') fbShowSaveSyncScreen(); };
+
+/* 2026-09-06追加(UI改修Phase2):下部タブナビゲーション本体の配線。
+   旧トップメニューのbtnShop/btnCollection/btnTamer/btnTradeが持っていた処理内容は
+   そのままここへ移した(処理自体・遷移先の画面はすべて既存のまま、入口をタブに一本化しただけ)。
+   showScreen()側のupdateBottomTabBar()がハイライト表示を担当するので、ここではタブごとの
+   「着地画面を開く」処理だけを行えばよい */
+function goToCollectionTab(){
+  /* 2026-07-29:ショップ/リミテッド/ストーリーが全てstoryCollectionを共有するようになったため、
+     「カード」タブのコレクションもそちらを表示する(以前の'main'は実質空になるため) */
+  collectionDataSource = 'story';
+  collectionReturnTo = null;
+  showCollection();
+}
+document.querySelectorAll('.tab-bar-item').forEach(btn=>{
+  btn.onclick = ()=>{
+    playSfx('select');
+    const tab = btn.dataset.tab;
+    if(tab==='home') showMainMenu();
+    else if(tab==='battle') showScreen('battleHubScreen');
+    else if(tab==='deck'){
+      deckEditorState.returnTo = ()=> showMainMenu();
+      openDeckEditor('all', null, false);
+    }
+    else if(tab==='card') goToCollectionTab();
+    else if(tab==='shop') showShop();
+  };
+});
+/* コレクション/ショップ画面ヘッダーへ、関連機能(トレード/テイマー)への導線ボタンを追加する
+   (旧トップメニューのbtnTrade/btnTamerの処理内容をここへ移した) */
+(function addScreenHeaderLinkButtons(){
+  const collectionHeader = document.querySelector('#collectionScreen .screen-header');
+  if(collectionHeader){
+    const tradeBtn = document.createElement('button');
+    tradeBtn.className = 'screen-header-link-btn';
+    tradeBtn.textContent = '🔁 トレード';
+    tradeBtn.onclick = ()=>{ if(typeof fbShowTradeEntryScreen==='function') fbShowTradeEntryScreen(); };
+    collectionHeader.appendChild(tradeBtn);
+  }
+  const shopHeader = document.querySelector('#shopScreen .screen-header');
+  if(shopHeader){
+    const tamerBtn = document.createElement('button');
+    tamerBtn.className = 'screen-header-link-btn';
+    tamerBtn.textContent = '👤 テイマー';
+    tamerBtn.onclick = showTamer;
+    shopHeader.appendChild(tamerBtn);
+  }
+})();
 
 /* メニュー系のボタン(トップメニュー・戻るボタン)は個別にSE配線せず、
    イベント委任で一括して鳴らす */
