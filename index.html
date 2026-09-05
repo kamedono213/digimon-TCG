@@ -414,8 +414,8 @@
      回転を促すガードだけを表示する(蟲神器のorientation-guardと同じ設計思想を、
      デジモンTCG既存のCSS変数(--bg/--gold/--ink)で表現)。ゲームロジック・
      画面遷移構造には触れない、純粋な表示のオン/オフだけの追加 */
-  html{ overscroll-behavior:none; }
-  body{ overscroll-behavior:none; -webkit-tap-highlight-color:transparent; }
+  html{ overscroll-behavior:none; overflow-x:hidden; }
+  body{ overscroll-behavior:none; -webkit-tap-highlight-color:transparent; overflow-x:hidden; }
   #orientationGuard{
     position:fixed; inset:0; z-index:99999;
     background:var(--bg);
@@ -1986,8 +1986,18 @@
   /* 画面が十分広い時は、ターン終了等のボタン列を自分/相手ゾーンの間から
      アリーナ右外側へ切り出し、縦積みのミニパネルにして両ゾーンの間隔を詰める
      (2026-07-19、一般的なデジタルTCGでエンドターンボタンが盤面中央ではなく
-     サイドに固定配置されているのを参考に変更) */
-  @media (min-width:1000px){
+     サイドに固定配置されているのを参考に変更)。
+     2026-09-05修正(UI改修Phase1バグ修正):しきい値を1000pxから1700pxへ引き上げ。
+     .controls/.battle-side-panelはどちらも.arena(position:relative、幅は最大1320px)を
+     基準にposition:absoluteで外側へはみ出す配置のため、実際に必要な幅は
+     アリーナ1320px+右側の.controls(118+16px)+左側の.battle-side-panel(160+16px)
+     ≒1630px。1000pxのままだと実機タブレット(1024〜1366px幅)でちょうど「発動はするが
+     収まる余白が無い」帯に入ってしまい、ターン終了ボタン等が画面右外にはみ出す
+     バグになっていた(実測で確認済み)。真の デスクトップ幅(1700px以上)でのみ
+     この左右サイドバー配置を有効にし、それ未満(タブレットを含む)は下の
+     @media(max-width:1699px)によって通常の中央寄せ横並び(.controlsの基本スタイル)
+     のままにする */
+  @media (min-width:1700px){
     .controls{
       position:absolute; left:100%; top:50%; transform:translateY(-50%);
       margin-left:16px; flex-direction:column; flex-wrap:nowrap; gap:8px; width:118px; padding:0;
@@ -2020,7 +2030,7 @@
     .battle-history-panel > div.log-self{ border-left-color:#4fc3f7; background:rgba(79,195,247,.10); }
     .battle-history-panel > div.log-opponent{ border-left-color:#ff6b6b; background:rgba(255,107,107,.10); }
   }
-  @media (max-width:999px){ .battle-side-panel{ display:none; } }
+  @media (max-width:1699px){ .battle-side-panel{ display:none; } }
   /* デッキ編集画面版の詳細パネル(2026-07-26追加、バトル画面の.battle-detail-panelと同じ
      内側クラス(.bdp-*)を共有し、位置決めだけをビューポート固定にして独立させている) */
   @media (min-width:1000px){
@@ -2452,6 +2462,48 @@
     .dark-exile-block{ width:76px; }
     .deck-stack{ width:36px; height:50px; }
     .menu-buttons{ max-width:280px; }
+  }
+
+  /* ==================== 横画面スマホ対応(2026-09-05追加、UI改修Phase1バグ修正) ====================
+     既存の@media(max-width:600px)の圧縮スタイルは「縦持ちスマホの狭い横幅」を想定して
+     チューニングされたもので、横画面専用化した今は幅650〜930px程度(横画面スマホの実寸)の
+     端末ではこれらが一切発動しない。一方で横画面スマホは「幅は広いが高さが極端に低い」
+     (390〜430px程度)ため、既存のPC/タブレット向けレイアウト(縦方向の余白を前提にした
+     field-grid高さ126px・mana-row高さ48px・手札ゾーン等)がそのまま使われて画面をはみ出し、
+     実質操作不能になっていた(バグ報告より)。ここでは横幅ではなく「高さ」を基準に、
+     対戦画面の縦方向サイズだけを詰める新しいブレークポイントを追加する。
+     カード自体の内容(CARDS/ゲームロジック)には一切触れない、純粋な寸法調整のみ */
+  @media (max-height:520px) and (orientation:landscape){
+    /* バトル画面上部のタイトル/サブタイトルは対局中は不要な装飾なので隠し、
+       縦方向の余白をまるごと対戦盤面に回す(メインメニュー等、他画面には影響しない) */
+    #battleScreen > h1.title, #battleScreen > .subtitle{ display:none; }
+    .arena{ gap:2px; padding:0 6px 2px; }
+    .player-zone{ gap:2px; }
+    .mana-row{ min-height:26px; gap:3px; padding:2px 6px; }
+    .mana-label{ font-size:9px; margin-right:2px; }
+    .stat-orb{ width:14px; height:14px; font-size:7px; }
+    .stat-orb.hand-orb{ width:13px; height:18px; }
+    .mana-card{ width:32px; height:44px; }
+    .field-grid{ height:64px; gap:3px; }
+    .zone{ padding:2px; gap:2px; }
+    .zone-label{ font-size:8px; }
+    .deck-stack{ width:30px; height:40px; font-size:9px; }
+    .battle-portrait-slot img{ max-height:56px; }
+    .battle-portrait-slot.portrait-in-grid{ right:2px; }
+    .portrait-deck-badge{ right:-4px; bottom:-3px; }
+    .portrait-deck-badge .deck-stack{ width:34px; height:47px; font-size:10px; border-width:1.5px; }
+    .controls{ gap:5px; padding:1px 0; }
+    .end-turn{ font-size:9.5px; padding:5px 9px; letter-spacing:0; }
+    .turn-indicator{ font-size:10px; }
+    .dark-exile-block{ width:58px; }
+    .hand-zone{ transform:scale(.46); right:2px; bottom:0; }
+    #shortcutHint{ display:none; }
+  }
+  /* さらに低いデバイス(iPhone SE系の横画面や、キーボード表示時のブラウザ内蔵ゲーム等)向け */
+  @media (max-height:400px) and (orientation:landscape){
+    .field-grid{ height:52px; }
+    .mana-row{ min-height:22px; }
+    .mana-card{ width:26px; height:36px; }
   }
 </style>
 </head>
@@ -26354,6 +26406,16 @@ function netSetupDataChannel(ch){
     }
   };
 }
+/* 2026-09-05追加(通信同期バグ修正):送信可能かどうかを通信経路に関わらず判定する。
+   netScheduleLiveBroadcast()がnetDataChannel(WebRTC専用)だけを見ていたため、
+   ルームコード方式(netTransportMode==='firebase')では常にfalseになり、
+   自分の手番中のライブ同期(1手ごとの更新)が一切送信されないバグがあった
+   (手番終了時のnetSendTurnStateだけがnetSend経由で動いていたため、対戦は成立するが
+   相手のターン中の操作がリアルタイムに反映されないように見えていた) */
+function netTransportReady(){
+  if(netTransportMode==='firebase') return typeof fbRoomRef!=='undefined' && !!fbRoomRef && !!fbRoomSeat;
+  return !!(netDataChannel && netDataChannel.readyState==='open');
+}
 function netSend(msg){
   if(netTransportMode==='firebase'){ fbSendRoomMessage(msg); return; }
   if(netDataChannel && netDataChannel.readyState==='open'){
@@ -26710,13 +26772,13 @@ function netReceiveTurnState(receivedState){
    (=操作はできないが盤面は追従する) */
 let netLiveSyncTimer = null;
 function netScheduleLiveBroadcast(){
-  if(!netDataChannel || netDataChannel.readyState!=='open') return;
+  if(!netTransportReady()) return;
   if(!state || !state.onlineMode || state.gameOver) return;
   if(state.active!=='player') return; // 自分の手番でない(=相手の手番を観戦しているだけの)間は送らない
   if(netLiveSyncTimer) return;
   netLiveSyncTimer = setTimeout(()=>{
     netLiveSyncTimer = null;
-    if(!netDataChannel || netDataChannel.readyState!=='open') return;
+    if(!netTransportReady()) return;
     if(!state || !state.onlineMode || state.active!=='player') return;
     const transferState = { ...state, player: netStripSideForTransfer(state.player), ai: netStripSideForTransfer(state.ai) };
     netSend({ type:'liveState', state: transferState });
