@@ -275,6 +275,37 @@
   .pack-bulk-buy-btn{
     display:block; width:100%; margin-top:6px; padding:4px 2px; font-size:10.5px;
   }
+  /* 2026-09-06追加(UI改修Phase4、ショップ画面の見せ方のみ):パック単体の情報量を
+     増やし「カードゲームのパック売り場」らしく見せる。#packScrollRow配下だけに
+     スコープしているため、コイン/スリーブ/プレイマット等ほかのカテゴリの.pack-item
+     表示には一切影響しない。価格・購入処理・在庫の実データはbuyPack/buyPacksBulk
+     側そのままで、ここでは装飾のみ */
+  #packScrollRow{ gap:20px; padding:14px 8px 26px; }
+  #packScrollRow .pack-shop-card{
+    width:190px; padding:14px 12px 16px; border-width:2px; border-radius:16px;
+    background:linear-gradient(165deg, rgba(240,195,104,.14), var(--panel) 55%);
+    box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 1px rgba(240,195,104,.12);
+  }
+  .pack-shop-card__art{
+    position:relative; border-radius:10px; overflow:hidden; margin-bottom:10px;
+    background:radial-gradient(ellipse at 50% 20%, rgba(240,195,104,.25), rgba(0,0,0,.35));
+    padding:8px;
+  }
+  .pack-shop-card__art img{
+    width:100%; height:190px; object-fit:cover; border-radius:7px; display:block;
+    box-shadow:0 4px 14px rgba(0,0,0,.5);
+  }
+  .pack-shop-card__stock{
+    font-family:'Space Mono'; font-size:10px; color:var(--ink-dim); margin-bottom:6px;
+  }
+  .pack-shop-card__price{
+    font-family:'Space Mono'; font-weight:700; font-size:16px; color:var(--gold-bright);
+    margin-bottom:10px;
+  }
+  .pack-shop-card__price-icon{ margin-right:2px; }
+  .pack-shop-card__buy-btn{
+    display:block; width:100%; padding:9px 4px; font-size:13px;
+  }
   .shop-section-label{ font-family:'Kaisei Decol'; color:var(--gold-bright); font-size:15px; margin:4px 0 0; text-align:center; }
   /* コイン/アイコンのように点数が多いカテゴリ用:横スクロール一本ではなく折り返しグリッド+
      縦スクロールに変更し、検索欄で絞り込めるようにする(2026-07-19、86種のコイン等に対応) */
@@ -334,6 +365,59 @@
     align-items:center; justify-content:center; gap:18px; z-index:20; padding:16px; overflow-y:auto;
   }
   .pack-open-overlay h2{ font-family:'Kaisei Decol'; font-size:22px; color:var(--gold-bright); text-align:center; }
+  /* ==================== パック開封演出(2026-09-06追加、UI改修Phase4) ====================
+     既存のpackOpenGrid以下(カード抽選結果の表示・めくり演出・UR/LRカットイン)には
+     一切触れない。ここは「パックそのものが画面に登場して開封を促す」新ステージで、
+     使う画像は既存のpack.img(ショップのパック箱絵)のみ。CSS 3D transformのみで
+     構成し、WebGL・動画・大量画像は使用しない(スマホ/タブレットでも軽量に動作) */
+  .pack-open-intro{ display:flex; flex-direction:column; align-items:center; gap:22px; perspective:900px; }
+  .pack-open-intro__pack{
+    width:170px; height:238px; cursor:pointer; position:relative;
+    transform-style:preserve-3d;
+    animation:pack-intro-float 3s ease-in-out infinite;
+  }
+  .pack-open-intro__pack:active{ animation-play-state:paused; transform:scale(.95) rotateY(0deg) !important; }
+  @keyframes pack-intro-float{
+    0%,100%{ transform:translateY(0) rotateY(-10deg) rotateZ(-1.5deg); }
+    50%{ transform:translateY(-16px) rotateY(10deg) rotateZ(1.5deg); }
+  }
+  .pack-open-intro__pack img{
+    width:100%; height:100%; object-fit:contain;
+    filter:drop-shadow(0 16px 26px rgba(0,0,0,.65));
+    border-radius:10px;
+  }
+  .pack-open-intro__sheen{
+    position:absolute; inset:0; border-radius:10px; overflow:hidden; pointer-events:none;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.4) 48%, transparent 66%);
+    background-size:250% 100%; background-position:150% 0;
+    animation:pack-intro-sheen 3.4s ease-in-out infinite;
+    mix-blend-mode:screen;
+  }
+  @keyframes pack-intro-sheen{ 0%{ background-position:160% 0; } 100%{ background-position:-60% 0; } }
+  /* タップ〜開封:パックを揺らして引き裂くように弾けさせ、直後に白フラッシュを挟んで
+     既存のpackOpenGridへ切り替える(この間、実際のカード抽選結果自体は
+     openPackReveal()側で既に確定済みのものをそのまま使うだけ) */
+  .pack-open-intro__pack.is-tearing{ animation:pack-intro-tear .55s cubic-bezier(.3,0,.4,1) forwards; }
+  @keyframes pack-intro-tear{
+    0%{ transform:scale(1) rotate(0deg); }
+    25%{ transform:scale(1.05) rotate(-5deg); }
+    50%{ transform:scale(1.05) rotate(5deg); }
+    75%{ transform:scale(1.15) rotate(-2deg); }
+    100%{ transform:scale(1.5) rotate(0deg); opacity:0; }
+  }
+  .pack-open-intro__hint{
+    font-family:'Space Mono',monospace; color:var(--gold-bright); font-size:13px; letter-spacing:1px;
+    animation:pack-intro-hint 1.4s ease-in-out infinite;
+  }
+  @keyframes pack-intro-hint{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+  .pack-open-intro-flash{
+    position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:21;
+  }
+  .pack-open-intro-flash.is-flashing{ animation:pack-intro-flash .35s ease-out; }
+  @keyframes pack-intro-flash{ 0%{ opacity:0; } 30%{ opacity:.92; } 100%{ opacity:0; } }
+  @media (max-height:600px) and (orientation:landscape){
+    .pack-open-intro__pack{ width:120px; height:168px; }
+  }
   .pack-open-grid{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; max-width:900px; perspective:1000px; }
   .pack-card-slot{ width:120px; height:168px; cursor:pointer; }
   /* ブースタードラフト(2026-07-29追加) */
@@ -3105,8 +3189,21 @@
 
   <div id="packOpenOverlay" class="pack-open-overlay hidden">
     <h2 id="packOpenTitle">パックオープン</h2>
-    <div class="pack-open-grid" id="packOpenGrid"></div>
-    <div class="pack-open-actions">
+    <!-- 2026-09-06追加(UI改修Phase4):パック開封の「見せ方」だけを追加する新ステージ。
+         既存のpackOpenGrid/openPackReveal()のデータ・抽選・カード取得処理には一切触れない。
+         ここで表示するのは既存のpack.img(ショップのパック箱画像、新規画像は使わない)を
+         浮遊/回転させ、タップまたはスキップでこれまで通りのpackOpenGridへ進むだけ -->
+    <div id="packOpenIntro" class="pack-open-intro">
+      <div class="pack-open-intro__pack" id="packOpenIntroPack">
+        <img id="packOpenIntroImg" src="" alt="">
+        <div class="pack-open-intro__sheen"></div>
+      </div>
+      <div class="pack-open-intro__hint">タップして開封</div>
+      <button class="menu-btn secondary" id="packOpenIntroSkipBtn">スキップ</button>
+    </div>
+    <div class="pack-open-intro-flash" id="packOpenIntroFlash"></div>
+    <div class="pack-open-grid hidden" id="packOpenGrid"></div>
+    <div class="pack-open-actions hidden" id="packOpenActions">
       <button class="menu-btn" id="packOpenAllBtn">一気にオープン</button>
       <button class="menu-btn secondary hidden" id="packOpenContinueBtn">続けて開封</button>
       <button class="end-turn secondary" id="packOpenCloseBtn">閉じる</button>
@@ -24632,11 +24729,21 @@ function showShop(){
   document.getElementById('packRevealArea').innerHTML = '';
   const row = document.getElementById('packScrollRow');
   row.innerHTML = '';
+  /* 2026-09-06変更(UI改修Phase4、見せ方のみ):パック1点の情報量を増やし
+     「カードゲームのパック売り場」らしいレイアウトにする。購入処理(buyPack/
+     buyPacksBulk)・価格(100コイン固定)・在庫概念(このゲームにパックの数量制限は
+     存在しないため無制限表記のまま)は一切変更しない */
   PACK_SETS.forEach(pack=>{
     const el = document.createElement('div');
-    el.className = 'pack-item';
-    el.innerHTML = `<img src="${pack.img}"><div class="pack-item-name">${pack.name}</div><div class="pack-item-price">100コイン</div>`;
+    el.className = 'pack-item pack-shop-card';
+    el.innerHTML = `
+      <div class="pack-shop-card__art"><img src="${pack.img}"></div>
+      <div class="pack-item-name">${pack.name}</div>
+      <div class="pack-shop-card__stock">在庫: 無制限</div>
+      <div class="pack-shop-card__price"><span class="pack-shop-card__price-icon">💰</span>100</div>
+      <button class="menu-btn pack-shop-card__buy-btn">1個購入</button>`;
     el.onclick = ()=> buyPack(pack);
+    el.querySelector('.pack-shop-card__buy-btn').onclick = (e)=>{ e.stopPropagation(); buyPack(pack); };
     const bulkBtn = document.createElement('button');
     bulkBtn.className = 'side-toggle-btn pack-bulk-buy-btn';
     bulkBtn.textContent = '10個同時購入';
@@ -24977,11 +25084,55 @@ function equipCosmetic(tab, item){
   renderTamerItems();
 }
 
+/* 2026-09-06追加(UI改修Phase4):パック演出ステージ→既存のカード結果グリッドへの
+   切り替えだけを行うヘルパー。抽選結果(pulled)やカード取得処理には一切関与しない
+   (それらはこの関数が呼ばれるより前、openPackReveal()の残り部分・buyPack()側で
+   既に確定済み)。タップ時(withAnim=true)は引き裂き演出+フラッシュを挟み、
+   スキップ時(withAnim=false)は即座に切り替える */
+function revealPackOpenGrid(withAnim){
+  const introPack = document.getElementById('packOpenIntroPack');
+  const proceed = ()=>{
+    document.getElementById('packOpenIntro').classList.add('hidden');
+    document.getElementById('packOpenGrid').classList.remove('hidden');
+    document.getElementById('packOpenActions').classList.remove('hidden');
+  };
+  if(withAnim){
+    playSfx('packFlip');
+    introPack.classList.add('is-tearing');
+    const flash = document.getElementById('packOpenIntroFlash');
+    setTimeout(()=>{
+      flash.classList.add('is-flashing');
+      proceed();
+      setTimeout(()=> flash.classList.remove('is-flashing'), 400);
+    }, 420);
+  } else {
+    proceed();
+  }
+}
 function openPackReveal(pack, pulled, onClose, closeLabel, continueFn){
   const overlay = document.getElementById('packOpenOverlay');
   overlay.classList.remove('hidden');
+  /* 2026-09-06追加(UI改修Phase4):Phase3のバトル画面同様、パック開封中は下部タブを
+     一時的に隠して演出に集中できるようにする(showScreen()を経由しないオーバーレイの
+     ため、updateBottomTabBar()とは別にここで直接制御する)。開封前に表示されていた
+     画面idを控えておき、閉じる時に同じ画面のタブ状態へ復元する(onClose側が別画面へ
+     showScreen()で遷移する場合は、その呼び出しが上書きしてくれるので問題ない) */
+  const tabBarEl = document.getElementById('bottomTabBar');
+  if(tabBarEl) tabBarEl.classList.add('hidden');
+  const screenIdBeforePackOpen = ['mainMenuScreen','battleHubScreen','soloPlayMenuScreen','storySubMenuScreen','battleMenuScreen','limitedMenuScreen','netBattleMenuScreen','deckEditScreen','shopScreen','collectionScreen','battleScreen','tamerScreen','storyMapScreen','storyShopScreen','rogueMapScreen','rogueShopScreen','rogueSkillTreeScreen','draftSetupScreen','draftPickScreen']
+    .find(sid=> !document.getElementById(sid).classList.contains('hidden'));
   document.getElementById('packOpenTitle').textContent = `${pack.name} を開封!`;
   document.getElementById('packOpenCloseBtn').textContent = closeLabel || '閉じる';
+  /* パック演出ステージの初期化(前回開封時の引き裂きアニメが残っていればリセットし、
+     既存のショップのパック箱画像(pack.img)をそのまま使う。新規画像は追加しない) */
+  const introPack = document.getElementById('packOpenIntroPack');
+  introPack.classList.remove('is-tearing');
+  document.getElementById('packOpenIntroImg').src = pack.img || '';
+  document.getElementById('packOpenIntro').classList.remove('hidden');
+  document.getElementById('packOpenGrid').classList.add('hidden');
+  document.getElementById('packOpenActions').classList.add('hidden');
+  introPack.onclick = ()=> revealPackOpenGrid(true);
+  document.getElementById('packOpenIntroSkipBtn').onclick = ()=> revealPackOpenGrid(false);
   /* 「続けて開封」:同じパックをもう1つその場で購入し、閉じずに次の開封へ進む
      (2026-07-19追加。10連購入時の1パックずつ連続開封や、通常購入の連続開封に使う) */
   const continueBtn = document.getElementById('packOpenContinueBtn');
@@ -25049,6 +25200,10 @@ function openPackReveal(pack, pulled, onClose, closeLabel, continueFn){
   };
   document.getElementById('packOpenCloseBtn').onclick = ()=>{
     overlay.classList.add('hidden');
+    /* 2026-09-06追加(UI改修Phase4):下部タブを開封前の画面状態に復元。
+       onClose()が別画面へshowScreen()で遷移する場合はそちらが後から正しい状態に
+       上書きするので、先に復元してもしなくても問題ない */
+    if(screenIdBeforePackOpen && typeof updateBottomTabBar==='function') updateBottomTabBar(screenIdBeforePackOpen);
     if(onClose){ onClose(); return; }
     const area = document.getElementById('packRevealArea');
     area.innerHTML = '<div class="pack-reveal-label">獲得カード</div>';
