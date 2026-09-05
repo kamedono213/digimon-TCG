@@ -4,9 +4,9 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#0b0f14",
-  "theme_color": "#0b0f14",
+  "orientation": "landscape",
+  "background_color": "#171512",
+  "theme_color": "#171512",
   "icons": [
     { "src": "image/coins/coin1.png", "sizes": "320x320", "type": "image/png", "purpose": "any" }
   ]

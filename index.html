@@ -5,8 +5,8 @@
 <title>DIGITAL MONSTER CARD</title>
 <link rel="icon" type="image/png" href="image/coins/coin1.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b0f14">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171512">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <!-- 2026-09-05追加:ルームコード対戦・ID引き継ぎ・トレード用(firebase-online.js)。
@@ -409,6 +409,35 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  /* ==================== 横画面専用化(2026-09-05追加、UI改修Phase 1) ====================
+     デジモンTCGを横画面専用ゲームとして扱う。縦持ち時はゲーム本体を隠し、
+     回転を促すガードだけを表示する(蟲神器のorientation-guardと同じ設計思想を、
+     デジモンTCG既存のCSS変数(--bg/--gold/--ink)で表現)。ゲームロジック・
+     画面遷移構造には触れない、純粋な表示のオン/オフだけの追加 */
+  html{ overscroll-behavior:none; }
+  body{ overscroll-behavior:none; -webkit-tap-highlight-color:transparent; }
+  #orientationGuard{
+    position:fixed; inset:0; z-index:99999;
+    background:var(--bg);
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px; text-align:center; padding:20px;
+    font-family:'Zen Kaku Gothic New', sans-serif; color:var(--ink);
+  }
+  @media (orientation:portrait){ #orientationGuard{ display:flex; } }
+  #orientationGuard .orientation-guard__icon{
+    font-size:3.4em; color:var(--gold-bright);
+    animation:orientation-rotate-hint 1.6s ease-in-out infinite;
+  }
+  #orientationGuard .orientation-guard__title{
+    font-size:1.3em; font-weight:700; color:var(--gold-bright);
+  }
+  #orientationGuard .orientation-guard__text{
+    font-size:.95em; color:var(--ink-dim); max-width:320px; line-height:1.6;
+  }
+  @keyframes orientation-rotate-hint{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(-90deg); }
+  }
   #bgPhoto{
     position:fixed; inset:0; z-index:-1;
     background-color:var(--bg);
@@ -2427,6 +2456,12 @@
 </style>
 </head>
 <body>
+
+  <div id="orientationGuard">
+    <div class="orientation-guard__icon">📱</div>
+    <div class="orientation-guard__title">画面を横向きにしてください</div>
+    <div class="orientation-guard__text">デジモンTCGは横画面専用です。端末を横に回転させてお楽しみください。</div>
+  </div>
 
   <div id="bgPhoto"></div>
 
