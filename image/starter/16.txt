@@ -1,0 +1,34 @@
+# デッキ名: 天使と悪魔
+# 保存日時: 2026/7/28 23:23:40
+# 枚数: 30
+
+slashangemon  # スラッシュエンジェモン
+slashangemon  # スラッシュエンジェモン
+minervamon  # ミネルヴァモン
+minervamon  # ミネルヴァモン
+holyangemon  # ホーリーエンジェモン
+holyangemon3  # ホーリーエンジェモン
+piddomon  # ピッドモン
+angemon  # エンジェモン
+patamon  # パタモン
+patamon  # パタモン
+devidramon  # デビドラモン
+devidramon  # デビドラモン
+ghost_hand  # ゴーストハンド
+ghost_hand  # ゴーストハンド
+all_delete  # オール・デリート
+mummymon  # マミーモン
+mummymon  # マミーモン
+devimon  # デビモン
+devimon  # デビモン
+ladydevimon  # レディーデビモン
+ladydevimon  # レディーデビモン
+judgment_day  # ジャッジメントデイ
+keramon  # ケラモン
+keramon  # ケラモン
+chrysalimon  # クリサリモン
+chrysalimon  # クリサリモン
+diaboromon  # ディアボロモン
+diaboromon  # ディアボロモン
+lucemon  # ルーチェモン
+lucemon  # ルーチェモン

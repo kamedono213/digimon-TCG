@@ -1,0 +1,34 @@
+# デッキ名: ジョグレス進化
+# 保存日時: 2026/7/18 10:52:34
+# 枚数: 30
+
+chibimon  # チビモン
+paildramon  # パイルドラモン
+paildramon  # パイルドラモン
+veemon  # ブイモン
+veemon  # ブイモン
+petit_flame  # プチフレイム
+exveemon  # エクスブイモン
+exveemon  # エクスブイモン
+flamedramon  # フレイドラモン
+gaia_force  # ガイアフォース
+gaia_force  # ガイアフォース
+final_elysion  # ファイナルエリジオン
+grey_sword  # グレイソード
+grey_sword  # グレイソード
+omega_cannon  # オメガキャノン
+imperialdramon_dragon  # インペリアルドラモン(ドラゴンモード)
+imperialdramon_dragon  # インペリアルドラモン(ドラゴンモード)
+imperialdramon_fighter  # インペリアルドラモン(ファイターモード)
+dinobeemon  # ディノビーモン
+dinobeemon  # ディノビーモン
+minomon  # ミノモン
+wormmon  # ワームモン
+wormmon  # ワームモン
+stingmon  # スティングモン
+stingmon  # スティングモン
+nature_trap_spell  # ネイチャートラップ
+nature_trap_spell  # ネイチャートラップ
+digimental_charge  # デジメンタルチャージ
+digimental_glow  # デジメンタルグロウ
+petit_flame  # プチフレイム

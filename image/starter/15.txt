@@ -1,0 +1,34 @@
+# デッキ名: インパルス
+# 保存日時: 2026/7/28 23:23:32
+# 枚数: 30
+
+kilomon  # キロプモン
+kilomon  # キロプモン
+pristimon  # プリスティモン
+pristimon  # プリスティモン
+zecomon  # ゲッコーモン
+zecomon  # ゲッコーモン
+wolfmon2  # ウルヴァモン
+cougarmon  # クーガモン
+cougarmon  # クーガモン
+wolfmon2  # ウルヴァモン
+knightkilomon  # ナイトキロプモン
+knightkilomon  # ナイトキロプモン
+armarizamon  # アルマリザモン
+armarizamon  # アルマリザモン
+mushmon  # マッシュモン
+mushmon  # マッシュモン
+murasamemon  # ムラサメモン
+murasamemon  # ムラサメモン
+rannamon  # ランナモン
+rannamon  # ランナモン
+pulsemon4  # パルスモン
+pulsemon4  # パルスモン
+monarcrizamon  # モナークリザモン
+monarcrizamon  # モナークリザモン
+bulkmon4  # バルクモン
+bulkmon4  # バルクモン
+shroudmon4  # シュラウドモン
+shroudmon4  # シュラウドモン
+kazuchimon4  # カヅチモン
+kazuchimon4  # カヅチモン

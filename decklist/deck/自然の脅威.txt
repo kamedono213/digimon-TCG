@@ -1,0 +1,34 @@
+# デッキ名: カブテリモン
+# 保存日時: 2026/7/18 10:47:08
+# 枚数: 30
+
+herculeskabuterimon  # ヘラクルカブテリモン
+herculeskabuterimon  # ヘラクルカブテリモン
+atlurkabuterimon  # アトラーカブテリモン
+atlurkabuterimon  # アトラーカブテリモン
+nature_trap_spell  # ネイチャートラップ
+nature_trap_spell  # ネイチャートラップ
+mammon  # マンモン
+okuwamon  # オオクワモン
+pinocchimon  # ピノッキモン
+kabuterimon  # カブテリモン
+kabuterimon  # カブテリモン
+snimon  # スナイモン
+kuwagamon_x  # クワガーモンX抗体
+kuwagamon  # クワガーモン
+wormmon  # ワームモン
+wormmon  # ワームモン
+stingmon  # スティングモン
+stingmon  # スティングモン
+photosynthesis  # こうごうせい
+photosynthesis  # こうごうせい
+tentomon  # テントモン
+tentomon  # テントモン
+jyureimon  # ジュレイモン
+jyureimon  # ジュレイモン
+terriermon  # テリアモン
+gargomon  # ガルゴモン
+rapidmon  # ラピッドモン
+saintgargomon  # セントガルゴモン
+pinocchimon  # ピノッキモン
+snimon  # スナイモン

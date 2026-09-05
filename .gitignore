@@ -1,0 +1,40 @@
+# Card art source/staging pipeline (raw scans, resize/split intermediates,
+# inject_art*.ps1 scripts). Not used at runtime - index.html only ever
+# references the already-injected ART/ART_PACK*/LEGEND_CUTIN_ART data, and
+# those are now externalized to the image CDN repo instead. Kept locally
+# only, never pushed - this alone is the bulk of the old repo size problem.
+card_images/
+
+# Local development backups of index.html (manual snapshots taken while
+# working, unrelated to git history).
+backups/
+index_backup_*.html
+index.new.html
+_tmp_debug_*.js
+_tmp_*_b64.txt
+
+# Local tooling used to extract/convert/verify the embedded card art. Its
+# *output* (asset_url_map.json, cdn_repo/) is what gets pushed to the
+# separate image-asset repo, not committed here.
+_asset_export/
+
+node_modules/
+
+# Copyrighted anime theme songs (BGM). Per CLAUDE.md this project has never
+# bundled these - users place their own mp3 files locally - so they must
+# not be pushed to a public GitHub repo. SE/ (short generic sound effects)
+# is unaffected and stays tracked.
+music/
+
+# Claude Code runtime/session files (already covered by .git/info/exclude
+# too, listed here so it's visible to anyone cloning the repo).
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks.json
+.claude/routines/.state/
+.claude/worktrees/
+.claude/checkpoints/
+.claude/mailbox/
+.claude/agent-registry.json
+.claude/agent-memory-local
+.claude/first-run
+.claude/assistant-daemon-state.json

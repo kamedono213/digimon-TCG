@@ -1,0 +1,34 @@
+# デッキ名: 天使の軍勢
+# 保存日時: 2026/7/18 10:49:57
+# 枚数: 30
+
+patamon  # パタモン
+patamon  # パタモン
+gate_of_heavens  # 天空の門
+gate_of_heavens  # 天空の門
+digimental_order  # デジメンタルオーダー
+digimental_order  # デジメンタルオーダー
+leomon_x  # レオモンX抗体
+piyomon  # ピヨモン
+birdramon  # バードラモン
+angemon  # エンジェモン
+angemon  # エンジェモン
+angewomon  # エンジェウーモン
+angewomon  # エンジェウーモン
+knightmon  # ナイトモン
+leomon  # レオモン
+holyangemon  # ホーリーエンジェモン
+holyangemon  # ホーリーエンジェモン
+garudamon  # ガルダモン
+parrotmon  # パロットモン
+heavens_gate  # ヘブンズゲート
+heavens_gate  # ヘブンズゲート
+goddramon  # ゴッドドラモン
+judgment_day  # ジャッジメントデイ
+judgment_day  # ジャッジメントデイ
+army_of_light  # 光の軍勢
+army_of_light  # 光の軍勢
+seraphimon  # セラフィモン
+seraphimon  # セラフィモン
+barrier_of_light  # 光の結界
+unimon  # ユニモン

@@ -1,0 +1,34 @@
+# デッキ名: すぺるてすｔ
+# 保存日時: 2026/7/17 8:51:27
+# 枚数: 30
+
+petit_flame  # プチフレイム
+mugen_cannon  # ムゲンキャノン
+crest_of_courage  # 勇気の紋章
+crest_of_knowledge  # 知識の紋章
+digivice_spell  # デジヴァイス
+training_spell  # トレーニング
+photosynthesis  # こうごうせい
+digimental_order  # デジメンタルオーダー
+sky_wave  # スカイウェーブ
+digimental_flash  # デジメンタルフラッシュ
+digimental_disorder  # デジメンタルディスオーダー
+resurrection_spell  # リザレクション
+final_elysion  # ファイナルエリジオン
+grey_sword  # グレイソード
+barrier_of_light  # 光の結界
+double_impact  # ダブルインパクト
+virus_band  # ウィルスバンド
+all_delete  # オール・デリート
+heavens_gate  # ヘブンズゲート
+omega_cannon  # オメガキャノン
+army_of_light  # 光の軍勢
+judgment_day  # ジャッジメントデイ
+patamon  # パタモン
+agumon_v3  # アグモン
+agumon_v3  # アグモン
+holyangemon  # ホーリーエンジェモン
+picodevimon_black  # ピコデビモン
+picodevimon_black  # ピコデビモン
+palmon  # パルモン
+otamamon  # オタマモン

@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stamp service worker cache version (forces tablets to fetch new code/images on next load, never touches game data or save data)
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          sed -i "s/__CACHE_VERSION__/${SHA_SHORT}/" sw.js
+
+      - name: Prepare Pages site (game files only; dev/build tooling and local-only asset staging are excluded)
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.claude' \
+            --exclude '.agents' \
+            --exclude 'node_modules' \
+            --exclude '_asset_export' \
+            --exclude 'card_images' \
+            --exclude 'backups' \
+            --exclude 'index.new.html' \
+            ./ _site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

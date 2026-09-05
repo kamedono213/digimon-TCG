@@ -1,0 +1,34 @@
+# デッキ名: デッキ3
+# 保存日時: 2026/7/18 2:20:14
+# 枚数: 30
+
+photosynthesis  # こうごうせい
+photosynthesis  # こうごうせい
+palmon  # パルモン
+palmon  # パルモン
+tentomon  # テントモン
+tentomon  # テントモン
+wormmon  # ワームモン
+wormmon  # ワームモン
+herculeskabuterimon_x  # ヘラクルカブテリモンX抗体
+holydramon  # ホーリードラモン
+patamon  # パタモン
+patamon  # パタモン
+leomon_x  # レオモンX抗体
+leomon_x  # レオモンX抗体
+knightmon  # ナイトモン
+knightmon  # ナイトモン
+angemon  # エンジェモン
+angemon  # エンジェモン
+rapidmon_armor  # ラピッドモン(アーマー体)
+rapidmon_armor  # ラピッドモン(アーマー体)
+leomon  # レオモン
+leomon  # レオモン
+goddramon  # ゴッドドラモン
+goddramon  # ゴッドドラモン
+elecmon  # エレキモン
+elecmon  # エレキモン
+terriermon  # テリアモン
+terriermon  # テリアモン
+gomamon  # ゴマモン
+gomamon  # ゴマモン

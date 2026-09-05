@@ -1,0 +1,34 @@
+# デッキ名: スペルブルー
+# 保存日時: 2026/7/28 23:23:27
+# 枚数: 30
+
+fenrirgamon  # フェンリルガモン
+fenrirgamon  # フェンリルガモン
+solgaramon  # ソルガルモン
+solgaramon  # ソルガルモン
+kyubimon  # キュウビモン
+kyubimon  # キュウビモン
+taomon  # タオモン
+taomon  # タオモン
+sakuyamon  # サクヤモン
+sakuyamon  # サクヤモン
+fuumamon  # フウマモン
+fuumamon  # フウマモン
+fusamon  # フサモン
+fusamon  # フサモン
+freeze_spell4  # フリーズ
+mega_launcher  # メガランチャー
+cocytus_breath  # コキュートスブレス
+yamato_gabumon3  # ヤマト&ガブモン
+yamato_gabumon3  # ヤマト&ガブモン
+petit_flame  # プチフレイム
+crest_of_knowledge  # 知識の紋章
+gate_of_heavens  # 天空の門
+desperado_blaster  # デスペラードブラスター
+grey_sword  # グレイソード
+grey_sword  # グレイソード
+nature_trap_spell  # ネイチャートラップ
+double_impact  # ダブルインパクト
+all_delete  # オール・デリート
+judgment_day  # ジャッジメントデイ
+ghost_hand  # ゴーストハンド

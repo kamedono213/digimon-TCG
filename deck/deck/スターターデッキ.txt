@@ -1,0 +1,34 @@
+# デッキ名: スターターデッキ
+# 保存日時: 2026/7/17 21:09:16
+# 枚数: 30
+
+agumon_v2  # アグモン
+agumon_v2  # アグモン
+gabumon  # ガブモン
+patamon  # パタモン
+tentomon  # テントモン
+tentomon  # テントモン
+greymon  # グレイモン
+greymon  # グレイモン
+garurumon  # ガルルモン
+garurumon  # ガルルモン
+metalgreymon  # メタルグレイモン
+weregarurumon  # ワーガルルモン
+weregarurumon  # ワーガルルモン
+koromon  # コロモン
+patamon  # パタモン
+metalgreymon  # メタルグレイモン
+gaia_force  # ガイアフォース
+gaia_force  # ガイアフォース
+gate_of_heavens  # 天空の門
+virus_band  # ウィルスバンド
+dokugumon  # ドクグモン
+paildramon  # パイルドラモン
+petit_flame  # プチフレイム
+veemon  # ブイモン
+guilmon  # ギルモン
+judgment_day  # ジャッジメントデイ
+mugen_cannon  # ムゲンキャノン
+skullgreymon  # スカルグレイモン
+all_delete  # オール・デリート
+jyureimon  # ジュレイモン

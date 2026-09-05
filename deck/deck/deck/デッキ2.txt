@@ -1,0 +1,34 @@
+# デッキ名: デッキ2
+# 保存日時: 2026/7/18 2:02:10
+# 枚数: 30
+
+imperialdramon_paladin  # インペリアルドラモン【パラディンモード】
+chibimon  # チビモン
+chibimon  # チビモン
+veemon  # ブイモン
+veemon  # ブイモン
+exveemon  # エクスブイモン
+exveemon  # エクスブイモン
+flamedramon  # フレイドラモン
+flamedramon  # フレイドラモン
+final_elysion  # ファイナルエリジオン
+final_elysion  # ファイナルエリジオン
+grey_sword  # グレイソード
+grey_sword  # グレイソード
+imperialdramon_dragon  # インペリアルドラモン(ドラゴンモード)
+imperialdramon_dragon  # インペリアルドラモン(ドラゴンモード)
+digimental_glow  # デジメンタルグロウ
+digimental_order  # デジメンタルオーダー
+monzaemon  # もんざえモン
+imperialdramon_fighter_black  # インペリアルドラモン【ファイターモード:黒】
+imperialdramon_fighter  # インペリアルドラモン(ファイターモード)
+imperialdramon_fighter  # インペリアルドラモン(ファイターモード)
+gaia_force  # ガイアフォース
+gaia_force  # ガイアフォース
+paildramon  # パイルドラモン
+paildramon  # パイルドラモン
+wormmon  # ワームモン
+wormmon  # ワームモン
+stingmon  # スティングモン
+stingmon  # スティングモン
+virus_band  # ウィルスバンド

@@ -1,0 +1,34 @@
+# デッキ名: ウィルス
+# 保存日時: 2026/7/25 17:33:18
+# 枚数: 30
+
+omegamon3  # オメガモン
+eyesmon3  # アイズモン
+greatgrizzmon  # グレートグリズモン
+greatgrizzmon  # グレートグリズモン
+all_delete  # オール・デリート
+parallelmon  # パラレルモン
+parallelmon  # パラレルモン
+raremon  # レアモン
+diaboromonx3  # ディアボロモンX抗体
+eyesmon  # アイズモン
+metalgreymon5  # メタルグレイモン
+metalgreymon5  # メタルグレイモン
+blackwargreymon3  # ブラックウォーグレイモン
+blackwargreymon3  # ブラックウォーグレイモン
+skullgreymon3  # スカルグレイモン
+skullgreymon3  # スカルグレイモン
+greymon4  # グレイモン
+greymon4  # グレイモン
+wargreymon3  # ウォーグレイモン
+wargreymon3  # ウォーグレイモン
+agumon_v3  # アグモン
+agumon_v3  # アグモン
+arukenimon  # アルケニモン
+veemon  # ブイモン
+veemon  # ブイモン
+guilmon  # ギルモン
+guilmon  # ギルモン
+grey_sword  # グレイソード
+grey_sword  # グレイソード
+parasimon  # パラサイモン

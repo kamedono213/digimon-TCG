@@ -1,0 +1,34 @@
+# デッキ名: てすと
+# 保存日時: 2026/7/17 8:21:10
+# 枚数: 30
+
+koromon  # コロモン
+chibimon  # チビモン
+veemon  # ブイモン
+agumon_hakase  # アグモンはかせ
+toyagumon  # トイアグモン
+exveemon  # エクスブイモン
+growlmon  # グラウモン
+monochromon  # モノクロモン
+kokatorimon  # コカトリモン
+megalogrowlmon  # メガログラウモン
+imperialdramon_fighter  # インペリアルドラモン(ファイターモード)
+dukemon  # デュークモン
+megidramon  # メギドラモン
+imperialdramon_dragon  # インペリアルドラモン(ドラゴンモード)
+tsunomon  # ツノモン
+betamon  # ベタモン
+gomamon  # ゴマモン
+otamamon  # オタマモン
+ikkakumon  # イッカクモン
+wizardmon  # ウィザーモン
+zessomon  # ゼソモン
+yukidarumon  # ユキダルモン
+ebidramon  # エビドラモン
+gekomon  # ゼコモン
+whamon  # ホエーモン
+anomalocarimon  # アノマロカリモン
+mekanorimon  # メカノリモン
+zudomon  # ズドモン
+shellmon  # シェルモン
+drimogemon  # ドリモゲモン

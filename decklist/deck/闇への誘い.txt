@@ -1,0 +1,34 @@
+# デッキ名: 闇への誘い
+# 保存日時: 2026/7/18 11:03:25
+# 枚数: 30
+
+mugen_cannon  # ムゲンキャノン
+agumon_v3  # アグモン
+agumon_v3  # アグモン
+pumpkinmon  # パンプモン
+pumpkinmon  # パンプモン
+dark_handes  # ダークハンデス
+picodevimon_black  # ピコデビモン
+picodevimon_black  # ピコデビモン
+resurrection_spell  # リザレクション
+resurrection_spell  # リザレクション
+greymon_blue  # グレイモン
+greymon_blue  # グレイモン
+devimon  # デビモン
+devimon  # デビモン
+bakemon  # バケモン
+skullgreymon  # スカルグレイモン
+ladydevimon  # レディーデビモン
+ladydevimon  # レディーデビモン
+mummymon  # マミーモン
+double_impact  # ダブルインパクト
+metalgreymon_blue  # メタルグレイモン
+metalgreymon_blue  # メタルグレイモン
+virus_band  # ウィルスバンド
+virus_band  # ウィルスバンド
+devidramon  # デビドラモン
+devidramon  # デビドラモン
+all_delete  # オール・デリート
+blackwargreymon  # ブラックウォーグレイモン
+blackwargreymon  # ブラックウォーグレイモン
+all_delete  # オール・デリート
